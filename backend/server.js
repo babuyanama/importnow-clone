@@ -176,7 +176,7 @@ app.post("/api/enquiries", (req, res) => {
   app.get("/api/enquiries", authenticateAdmin, (req, res) => {
   console.log("GET /api/enquiries called");
 
-  const sql = "SELECT * FROM importnow_db.enquiries ORDER BY created_at DESC";
+  const sql = "SELECT * FROM enquiries ORDER BY created_at DESC";
 
   db.query(sql, (error, results) => {
     if (error) {
