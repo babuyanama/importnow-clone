@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from "react";
-const API_URL = "https://importnow-clone-production-91f33528.up.railway.app";
+const API_URL = "https://importnow-clone-production-91f33528.up.railway.app/api";
 
 function Admin() {
   const [token, setToken] = useState(
