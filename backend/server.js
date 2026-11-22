@@ -1,10 +1,10 @@
-
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const db = require("./db");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
-require("dotenv").config();
+
 
 const app = express();
 
@@ -306,8 +306,8 @@ app.delete("/api/enquiries/:id", authenticateAdmin, (req, res) => {
 });
 
 // START SERVER
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
+app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server running on port ${PORT}`);
 });
