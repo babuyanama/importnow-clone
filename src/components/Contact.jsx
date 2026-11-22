@@ -1,6 +1,9 @@
 
 import { useState } from "react";
 
+const API_URL =
+  "https://importnow-clone-production-91f33528.up.railway.app/api/enquiries";
+
 function Contact() {
   const [formData, setFormData] = useState({
     name: "",
@@ -34,21 +37,39 @@ function Contact() {
     setError("");
 
     try {
-      const response = await fetch(
-        "https://importnow-clone-production.up.railway.app/api/enquiries",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        }
-      );
+      const response = await fetch(API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
 
-      const result = await response.json();
+      const responseText = await response.text();
+
+      let result = {};
+
+      if (responseText.trim()) {
+        try {
+          result = JSON.parse(responseText);
+        } catch {
+          throw new Error(
+            `Server returned an invalid response (HTTP ${response.status}).`
+          );
+        }
+      }
 
       if (!response.ok) {
-        throw new Error(result.message || "Submission failed");
+        throw new Error(
+          result.message ||
+            `Request failed. HTTP status: ${response.status}`
+        );
+      }
+
+      if (!responseText.trim()) {
+        throw new Error(
+          "Server returned an empty response. Please try again."
+        );
       }
 
       setSubmitted(true);
@@ -62,8 +83,11 @@ function Contact() {
       });
 
     } catch (error) {
-      console.error("Submission error:", error);
-      setError(error.message || "Something went wrong!");
+      console.error("Enquiry submission error:", error);
+
+      setError(
+        error.message || "Unable to submit your enquiry. Please try again."
+      );
     } finally {
       setLoading(false);
     }
@@ -107,8 +131,9 @@ function Contact() {
         <form className="contact-form" onSubmit={handleSubmit}>
           <h3>Request a Free Quote</h3>
 
-          <label>Your Name</label>
+          <label htmlFor="name">Your Name</label>
           <input
+            id="name"
             type="text"
             name="name"
             placeholder="Enter your name"
@@ -117,8 +142,9 @@ function Contact() {
             required
           />
 
-          <label>Email Address</label>
+          <label htmlFor="email">Email Address</label>
           <input
+            id="email"
             type="email"
             name="email"
             placeholder="Enter your email"
@@ -127,8 +153,9 @@ function Contact() {
             required
           />
 
-          <label>Product You Want to Import</label>
+          <label htmlFor="product">Product You Want to Import</label>
           <input
+            id="product"
             type="text"
             name="product"
             placeholder="Enter product name"
@@ -137,8 +164,9 @@ function Contact() {
             required
           />
 
-          <label>Required Quantity</label>
+          <label htmlFor="quantity">Required Quantity</label>
           <input
+            id="quantity"
             type="text"
             name="quantity"
             placeholder="Example: 500 kg"
@@ -146,8 +174,9 @@ function Contact() {
             onChange={handleChange}
           />
 
-          <label>Additional Details</label>
+          <label htmlFor="details">Additional Details</label>
           <textarea
+            id="details"
             name="details"
             rows="4"
             placeholder="Tell us about your requirements"
@@ -170,10 +199,6 @@ function Contact() {
               {error}
             </p>
           )}
-
-          <p className="form-note">
-            Your enquiry is being sent to our backend.
-          </p>
         </form>
 
       </div>
