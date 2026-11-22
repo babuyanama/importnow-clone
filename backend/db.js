@@ -3,7 +3,7 @@ const mysql = require("mysql2");
 require("dotenv").config({ path: __dirname + "/.env" });
 
 const db = mysql.createConnection(
-  process.env.DATABASE_URL
+  process.env.MYSQL_URL
 );
 
 db.connect((error) => {
