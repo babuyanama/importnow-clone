@@ -35,7 +35,7 @@ function Contact() {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/enquiries",
+        "https://importnow-clone-production.up.railway.app/api/enquiries",
         {
           method: "POST",
           headers: {
