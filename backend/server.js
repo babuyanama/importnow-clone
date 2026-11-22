@@ -36,7 +36,12 @@ app.post("/api/admin/login", async (req, res) => {
       password,
       process.env.ADMIN_PASSWORD_HASH
     );
-
+console.log("Admin login diagnostic:", {
+  usernameMatches: validUsername,
+  passwordMatches: validPassword,
+  hashLoaded: !!process.env.ADMIN_PASSWORD_HASH,
+  jwtLoaded: !!process.env.JWT_SECRET
+});
     if (!validUsername || !validPassword) {
       return res.status(401).json({
         success: false,
