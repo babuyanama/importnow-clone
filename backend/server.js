@@ -1,3 +1,4 @@
+
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
@@ -5,14 +6,13 @@ const db = require("./db");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
-
 const app = express();
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 
-// ADMIN LOGIN API - BCRYPT
+// ADMIN LOGIN API
 app.post("/api/admin/login", async (req, res) => {
   const { username, password } = req.body;
 
@@ -36,12 +36,7 @@ app.post("/api/admin/login", async (req, res) => {
       password,
       process.env.ADMIN_PASSWORD_HASH
     );
-console.log("Admin login diagnostic:", {
-  usernameMatches: validUsername,
-  passwordMatches: validPassword,
-  hashLoaded: !!process.env.ADMIN_PASSWORD_HASH,
-  jwtLoaded: !!process.env.JWT_SECRET
-});
+
     if (!validUsername || !validPassword) {
       return res.status(401).json({
         success: false,
@@ -60,7 +55,6 @@ console.log("Admin login diagnostic:", {
       message: "Login successful!",
       token,
     });
-
   } catch (error) {
     console.error("Admin login error:", error.message);
 
@@ -99,7 +93,6 @@ function authenticateAdmin(req, res, next) {
 
     req.admin = decoded;
     next();
-
   } catch (error) {
     return res.status(401).json({
       success: false,
@@ -172,24 +165,18 @@ app.post("/api/enquiries", (req, res) => {
 });
 
 // READ ENQUIRIES API - PROTECTED
-
-  app.get("/api/enquiries", authenticateAdmin, (req, res) => {
-  console.log("GET /api/enquiries called");
-
+app.get("/api/enquiries", authenticateAdmin, (req, res) => {
   const sql = "SELECT * FROM enquiries ORDER BY created_at DESC";
 
   db.query(sql, (error, results) => {
     if (error) {
-      console.error("Database error:", error);
+      console.error("Database error:", error.message);
 
       return res.status(500).json({
         success: false,
-        message: error.message,
+        message: "Unable to fetch enquiries.",
       });
     }
-
-    console.log("Records fetched:", results.length);
-    console.log("Enquiry data:", results);
 
     return res.status(200).json({
       success: true,
